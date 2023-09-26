@@ -1,0 +1,5 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Freento\AuditDatabase\Api\Data\TableInterface" type="Freento\AuditDatabase\Model\Table"/>
+    <preference for="Freento\AuditDatabase\Api\TableRepositoryInterface" type="Freento\AuditDatabase\Model\TableRepository"/>
+</config>

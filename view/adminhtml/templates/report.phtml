@@ -1,0 +1,68 @@
+<?php
+/** @var \Freento\AuditDatabase\Block\Adminhtml\Report $block */
+
+$tables = $block->getTableList();
+/** @var Magento\Framework\Escaper $escaper */
+?>
+<div class="freento-auditdatabase-report-grid report-data">
+    <div class="report-description">
+        <p>
+            <?= $escaper->escapeHtml(
+                __(
+                    'This table contains the full list of Magento database tables ordered by their disk space size.'
+                )
+            ) ?>
+        </p>
+        <?php if (!empty($tables) && $tables[0]->isSizeOverThreshold()): ?>
+        <p>
+            <?= $escaper->escapeHtml(
+                __(
+                    'Please review database tables highlighted in red as they consume the most disk space.'
+                )
+            ) ?>
+        </p>
+        <?php endif; ?>
+    </div>
+    <table class="data-grid">
+        <tr>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Table name')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Rows')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Engine')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Collation')) ?></th>
+            <th class="data-grid-th"><?= $escaper->escapeHtml(__('Size') . ' ↓') ?></th>
+        </tr>
+        <?php $odd = false; ?>
+        <?php /** @var \Freento\AuditDatabase\Api\Data\TableInterface $table */ ?>
+        <?php foreach ($tables as $table): ?>
+            <?php $isSizeOverThreshold = $table->isSizeOverThreshold(); ?>
+            <?php $class = '' ?>
+            <?php if ($isSizeOverThreshold || $odd): ?>
+                <?php if ($isSizeOverThreshold): ?>
+                    <?php $class = 'large-table' ?>
+                <?php elseif ($odd): ?>
+                    <?php $class = '_odd-row' ?>
+                <?php endif; ?>
+            <?php endif; ?>
+            <tr class="<?= $escaper->escapeHtmlAttr($class) ?>">
+                <td>
+                    <div class="data-grid-cell-content"><?= $escaper->escapeHtml($table->getName()) ?></div>
+                </td>
+                <td>
+                    <div class="data-grid-cell-content"><?= $escaper->escapeHtml($table->getRows()) ?></div>
+                </td>
+                <td>
+                    <div class="data-grid-cell-content"><?= $escaper->escapeHtml($table->getEngine()) ?></div>
+                </td>
+                <td>
+                    <div class="data-grid-cell-content"><?= $escaper->escapeHtml($table->getCollation()) ?></div>
+                </td>
+                <td>
+                    <div class="data-grid-cell-content">
+                        <?= $escaper->escapeHtml($block->formatSize($table->getSize())) ?>
+                    </div>
+                </td>
+            </tr>
+            <?php $odd = !$odd; ?>
+        <?php endforeach; ?>
+    </table>
+</div>
